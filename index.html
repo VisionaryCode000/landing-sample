@@ -1,0 +1,110 @@
+ <!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نمونه لندینگ پیج</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Trebuchet MS',sans-serif;}
+html, body {height:100%; overflow:hidden;}
+canvas#stars{position:absolute; top:0; left:0; width:100%; height:100%; z-index:-1; display:block;}
+body {display:flex; justify-content:center; align-items:center; background:#000;}
+.content {background:rgba(0,0,0,0.5); padding:3em 5em; border-radius:10px; text-align:center; color:#fff; min-width:300px;}
+.tabs{display:flex; justify-content:center; margin-bottom:1em; gap:2em;}
+.tab{cursor:pointer; color:#ccc; padding:0.5em 1em; border-bottom:2px solid transparent; transition:0.3s;}
+.tab.active{color:#39c; border-color:#39c; font-weight:600;}
+form {display:none; text-align:right;}
+form.active{display:block;}
+input, button{width:100%; padding:10px; margin:10px 0; border-radius:8px; border:none; font-size:14px;}
+input{background:rgba(255,255,255,0.1); color:#fff;}
+button{background:rgba(255,255,255,0.2); color:#fff; cursor:pointer; transition:0.3s;}
+button:hover{background:#39c;}
+h2{margin-bottom:15px; color:#f5debd;}
+@media(max-width:768px){.content{width:90%;padding:2em;} .tabs{flex-direction:column; gap:1em;}}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<div class="content">
+  <div class="tabs">
+    <div class="tab active" id="login-tab">ورود</div>
+    <div class="tab" id="signup-tab">ثبت‌نام</div>
+  </div>
+  <form id="login-form" class="active">
+    <h2>ورود</h2>
+    <input type="text" placeholder="نام کاربری یا ایمیل" required>
+    <input type="password" placeholder="رمز عبور" required>
+    <button type="submit">ورود</button>
+  </form>
+  <form id="signup-form">
+    <h2>ثبت‌نام</h2>
+    <input type="text" placeholder="نام کامل" required>
+    <input type="email" placeholder="ایمیل" required>
+    <input type="password" placeholder="رمز عبور" required>
+    <button type="submit">ثبت‌نام</button>
+  </form>
+</div>
+
+<script>
+// تب‌ها
+const loginTab=document.getElementById('login-tab');
+const signupTab=document.getElementById('signup-tab');
+const loginForm=document.getElementById('login-form');
+const signupForm=document.getElementById('signup-form');
+
+loginTab.addEventListener('click', ()=>{
+  loginForm.classList.add('active');
+  signupForm.classList.remove('active');
+  loginTab.classList.add('active');
+  signupTab.classList.remove('active');
+});
+signupTab.addEventListener('click', ()=>{
+  signupForm.classList.add('active');
+  loginForm.classList.remove('active');
+  signupTab.classList.add('active');
+  loginTab.classList.remove('active');
+});
+
+// ستاره‌ها
+const canvas=document.getElementById('stars');
+const ctx=canvas.getContext('2d');
+let w,h,stars=[];
+function resize(){ w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight;}
+window.addEventListener('resize', resize); resize();
+
+function createStars(count=200){
+  stars=[];
+  for(let i=0;i<count;i++){
+    stars.push({
+      x:Math.random()*w,
+      y:Math.random()*h,
+      r:Math.random()*1.5+0.5,
+      s:Math.random()*0.5+0.2,
+      alpha:Math.random(),
+      delta:Math.random()*0.02
+    });
+  }
+}
+createStars();
+
+function draw(){
+  ctx.clearRect(0,0,w,h);
+  for(let star of stars){
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, star.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,255,255,${star.alpha})`;
+    ctx.fill();
+    star.y+=star.s;
+    if(star.y>h) star.y=0;
+    star.alpha+=star.delta;
+    if(star.alpha<=0||star.alpha>=1) star.delta=-star.delta;
+  }
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+
+</body>
+</html>
